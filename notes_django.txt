@@ -1,0 +1,94 @@
+D:\work\python_projects\django_projects\src\trydjango
+
+-----Starter steps-----
+set up virtual_env
+pip install django==2.0.7                     
+django-admin startproject trydjango 
+python manage.py runserver
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py startapp products
+
+run for saving any changes to dbs
+python manage.py makemigrations
+python manage.py migrate after you make any changes
+
+
+-----python django shell- you can create objects in the DB
+python manage.py shell
+from products import Product
+Products.object.all()- shows all of products created
+Products.object.create()- just like where you went to admin to create
+
+
+
+
+-----------model_forms django----------
+form action will send the form to whatever URL you put there
+form method - GET or POST
+when you have post- general rule to use tokens
+https://stackoverflow.com/questions/2303268/djangos-forms-form-vs-forms-modelform
+------Pure django_forms forms.Form--------------------
+auto_validation- based on what you initialised first in models
+secure validation- built in validation
+form should match the validation in the models
+for eg price = forms.DecimalField() should match in models too
+
+you can set initial data to forms
+
+---form fields--------------------------------
+https://docs.djangoproject.com/en/4.0/ref/forms/fields/
+--widgets in forms----
+https://docs.djangoproject.com/en/4.0/ref/forms/widgets/
+
+-----form validating method--------------------------------
+overloading defaults form validation in case of forms.ModelForm
+
+
+
+---------Dynamic URL Routing--------------------------------
+urlpatterns = [
+    path('', product_list_view, name='product-list'),
+    path('create/', product_create_view, name='product-list'),
+    path('<int:id>/', product_detail_view, name='product-detail'),
+    path('<int:id>/update/', product_update_view, name='product-update'), #id id should match in view method as well
+    path('<int:id>/delete/', product_delete_view, name='product-delete'),
+]
+#spicific view of an id ie., product
+def product_detail_view(request, id):
+    obj = get_object_or_404(Product, id=id)
+    context = {
+        "object": obj
+    }
+    return render(request, "products/product_detail.html", context)
+
+#delete object using id
+def product_delete_view(request, id):
+    obj = get_object_or_404(Product, id=id)
+    if request.method == "POST":
+        obj.delete()
+        return redirect('../../')
+    context = {
+        "object": obj
+    }
+    return render(request, "products/product_delete.html", context)
+#product list view, queryset is typical name, typical context var name is object_list(to make them reusable)
+    def product_list_view(request):
+        queryset = Product.objects.all() # list of objects
+        context = {
+            "object_list": queryset
+            }
+        return render(request, "products/product_list.html", context)
+    in views
+    def product_list_view(request):
+        queryset = Product.objects.all() # list of objects
+        context = {
+            "object_list": queryset
+        }
+        return render(request, "products/product_list.html", context)
+
+
+get_absolute_url method, used conventionally for getting absolute url in django -- inside models.py
+def get_absolute_url(self):
+    return f"/products/{self.id}/"
+
