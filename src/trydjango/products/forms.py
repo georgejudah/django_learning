@@ -4,8 +4,8 @@ from django import forms
 from .models import Product
 
 class ProductForm(forms.ModelForm):
-    # #overiding defaults
-    # title = forms.CharField(label= '', widget=forms.TextInput(attrs={'placeholder': 'your-title'}))
+    #overiding defaults
+    # title = forms.CharField(label= 'Title', widget=forms.TextInput(attrs={'placeholder': 'your-title'}))
     # description = forms.CharField(required=False, widget=forms.Textarea(
     #     attrs={'placeholder': 'your-description',
     #     'class' : 'new-class-name two',

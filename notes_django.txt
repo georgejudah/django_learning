@@ -28,6 +28,20 @@ form action will send the form to whatever URL you put there
 form method - GET or POST
 when you have post- general rule to use tokens
 https://stackoverflow.com/questions/2303268/djangos-forms-form-vs-forms-modelform
+
+--------------- In forms, during update operation you can simply fill in the already existing values in the form by passing
+the objects as an instance as shown below---------------------------------
+def product_update_view(request, id=id):
+    obj = get_object_or_404(Product, id=id)
+    form = ProductForm(request.POST or None, instance=obj) # here you have passed the obj as instance for showing already exisiting values in the update form
+    if form.is_valid():
+        form.save()
+    context = {
+        'form': form
+    }
+    return render(request, "products/product_create.html", context)
+
+
 ------Pure django_forms forms.Form--------------------
 auto_validation- based on what you initialised first in models
 secure validation- built in validation
@@ -92,3 +106,43 @@ get_absolute_url method, used conventionally for getting absolute url in django 
 def get_absolute_url(self):
     return f"/products/{self.id}/"
 
+---------- django URL reverse - to no hardcode the urls in other places--------------------------------
+from django.urls import reverse
+#def get_absolute_url(self):
+        return reverse("product-detail", kwargs={"id": self.id})
+
+based of the name in views
+path('product/<int:id>/', product_detailed_view, name='product-detail'),
+
+--------------- URL confs ----------------------
+move product specified urls inside products(cleaner and less confusion in name)- create a urls.py and in original urls
+
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+----------name spacing ----------------------------------------------------------------
+    in models
+    def get_absolute_url(self):
+        return reverse("products:product-detail", kwargs={"id": self.id})
+
+#in products.urls
+    app_name = 'products'
+
+urlpatterns = [
+    path('<int:id>/', product_detailed_view, name='product-detail'),
+    path('', product_list_view, name='product-list'),
+    path('create/', product_create_view, name ='create' ),
+    path('<int:id>/delete/', product_delete_view, name='product-delete'),
+]
+
+
+
+------------CLASS BASED VIEWs ----------------------------------------------------------------
+https://github.com/codingforentrepreneurs/Try-Django/tree/master/src/blog
+
+https://www.youtube.com/watch?v=F5mRW0jo-U4&t=10932s&ab_channel=freeCodeCamp.org
+from 3hrs 15 mins onwards
+
+
+-----------------CLASS BASED VIEWS VS FUNCTION BASED VIEWS ---------------------------------
+https://stackoverflow.com/questions/14788181/class-based-views-vs-function-based-views#:~:text=I%20always%20use%20FBVs%20(Function,pain%20to%20implement%20with%20CBVs.

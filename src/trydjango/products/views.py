@@ -17,18 +17,18 @@ def about_view(request, *args, **kwargs):
         "my_list": [123,321,123, "abc"]
     }
     return render(request, 'about.html', my_context)
-def product_detailed_view(request):
-    obj = Product.objects.get(id=1)
-    # context = {
-    #     'title': obj.title,
-    #     'description': obj.description,
-    #     'price': obj.price,
-    # }
-    context = {
-        "obj": obj,
-    }
-    #right practise
-    return render(request, 'products/product_detail.html', context)
+# def product_detailed_view(request):
+#     obj = Product.objects.get(id=1)
+#     # context = {
+#     #     'title': obj.title,
+#     #     'description': obj.description,
+#     #     'price': obj.price,
+#     # }
+#     context = {
+#         "obj": obj,
+#     }
+#     #right practise
+#     return render(request, 'products/product_detail.html', context)
 
 #def product_create_view(request):
 #    form = ProductForm(request.POST or None)
@@ -65,11 +65,23 @@ def product_list_view(request):
     return render(request, "products/product_list.html", context)
 
 def product_detail_view(request, id):
-    obj = get_object_or_404(Product, id=id)
+    obj = get_object_or_404(Product, id = id)
     context = {
         "object": obj
     }
+    print(obj)
     return render(request, "products/product_detail.html", context)
+
+def product_update_view(request, id=id):
+    obj = get_object_or_404(Product, id=id)
+    form = ProductForm(request.POST or None, instance=obj)# here you have passed the obj as instance for showing already exisiting values in the update form
+    if form.is_valid():
+        form.save()
+    context = {
+        'form': form
+    }
+    return render(request, "products/product_create.html", context)
+    
 
 def product_delete_view(request, id):
     obj = get_object_or_404(Product, id=id)
